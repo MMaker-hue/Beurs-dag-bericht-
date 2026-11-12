@@ -62,7 +62,25 @@ h2.sec small { font-family: var(--sans); font-size: 12px; font-weight: 500; colo
 .chip { font-size: 12px; font-weight: 700; border: 1.5px solid var(--ink); border-radius: 999px; padding: 4px 10px; white-space: nowrap; }
 
 /* Samenvatting */
-.lead-card { background: #FFFFFF; border: 2px solid var(--ink); border-radius: 14px; padding: 14px 16px; font-family: var(--serif); font-size: 17px; line-height: 1.5; color: var(--ink-2); }
+.lead-card { font-family: var(--serif); font-size: 17px; line-height: 1.5; color: var(--ink-2); border-left: 3px solid var(--orange); padding-left: 12px; }
+.pbar { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px; align-items: center; background: var(--olive); color: var(--bg); border: 0; border-radius: 12px; padding: 11px 14px; cursor: pointer; text-align: left; width: 100%; }
+.pbar .t { font-size: 13px; font-weight: 700; }
+.pbar .e { font-family: var(--serif); font-size: 20px; font-weight: 800; }
+.pbar .p { font-size: 13px; font-weight: 700; }
+.ico { border-radius: 9px; flex: 0 0 auto; display: block; }
+.raakt-pill { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 800; border: 1.5px solid var(--ink); border-radius: 999px; padding: 1px 8px 1px 3px; background: #C9D08E; color: var(--ink); white-space: nowrap; }
+.raakt-pill img { width: 15px; height: 15px; }
+.impactregel { font-size: 13px; color: var(--muted); }
+.rubrow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.open-kop { display: flex; flex-direction: column; gap: 8px; padding-bottom: 16px; border-bottom: 2px solid var(--ink); cursor: pointer; background: none; border-top: 0; border-left: 0; border-right: 0; text-align: left; padding-left: 0; padding-right: 0; }
+.open-kop .top { display: flex; align-items: center; gap: 10px; }
+.open-kop h3 { margin: 0; font-family: var(--serif); font-size: 28px; font-weight: 800; line-height: 1.1; }
+.open-kop p { font-family: var(--serif); font-size: 16px; color: var(--ink-2); }
+.lijst { display: flex; flex-direction: column; }
+.lrij { display: grid; grid-template-columns: 40px minmax(0, 1fr) 12px; gap: 12px; padding: 12px 0; border: 0; border-bottom: 1px solid var(--sand); background: none; text-align: left; cursor: pointer; align-items: start; }
+.lrij .sum-tx { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.lrij .kop { font-family: var(--serif); font-size: 18px; font-weight: 700; line-height: 1.22; }
+.lrij .pijl, .chev { color: var(--muted); font-size: 20px; line-height: 1; }
 
 /* Beeld */
 .beeld { position: relative; border: 2px solid var(--ink); border-radius: 14px; overflow: hidden; background: var(--moss); }
@@ -87,11 +105,14 @@ h2.sec small { font-family: var(--sans); font-size: 12px; font-weight: 500; colo
 .filters { display: flex; flex-wrap: wrap; gap: 6px; }
 .filters button { font-size: 13px; font-weight: 700; border: 1.5px solid var(--ink); background: var(--bg); border-radius: 999px; padding: 7px 13px; min-height: 38px; cursor: pointer; }
 .filters button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.filters button.fi { display: inline-flex; align-items: center; gap: 6px; padding-left: 5px; }
+.filters button.fi img { border-radius: 6px; }
 
 /* Artikelen */
 .items { display: flex; flex-direction: column; gap: 12px; }
 details.art { border: 2px solid var(--ink); border-radius: 14px; background: #FFFFFF; overflow: hidden; }
-details.art summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) 84px; gap: 12px; padding: 12px; }
+details.art summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 40px minmax(0, 1fr) 14px; gap: 12px; padding: 12px; align-items: start; }
+details.art[open] .chev { transform: rotate(90deg); }
 details.art summary::-webkit-details-marker { display: none; }
 details.art .sum-tx { display: flex; flex-direction: column; gap: 4px; }
 details.art .kop { font-family: var(--serif); font-size: 18px; font-weight: 700; line-height: 1.2; }
@@ -212,9 +233,10 @@ nav.tabs button[aria-current="page"] { background: var(--sand); color: var(--ink
     <!-- Vandaag -->
     <section id="v-vandaag" class="section" aria-label="Vandaag">
       <div class="chips" id="chips-top"></div>
-      <div class="lead-card" id="samenvatting"></div>
+      <button type="button" class="pbar" id="pbar"><span class="t">Mijn portefeuille vandaag</span><span class="e num" id="pb-e">–</span><span class="p num" id="pb-p">›</span></button>
+      <p class="lead-card" id="samenvatting"></p>
       <div id="opening"></div>
-      <div class="grid2" id="raster"></div>
+      <div class="lijst" id="raster"></div>
       <div class="section">
         <h2 class="sec">Agenda <small>komende dagen</small></h2>
         <div class="tabel" id="agenda-kort"></div>
@@ -230,9 +252,9 @@ nav.tabs button[aria-current="page"] { background: var(--sand); color: var(--ink
       <h2 class="sec">Beursnieuws <small>bedrijven en markten</small></h2>
       <div class="filters" role="group" aria-label="Filter beursnieuws">
         <button type="button" data-f="alles" aria-pressed="true">Alles</button>
-        <button type="button" data-f="Nederland" aria-pressed="false">Nederland</button>
-        <button type="button" data-f="Internationaal" aria-pressed="false">Internationaal</button>
-        <button type="button" data-f="raakt" aria-pressed="false">Mijn fondsen</button>
+        <button type="button" data-f="Nederland" aria-pressed="false" class="fi"><img src="icons/nederland.png" alt="" width="24" height="24">Nederland</button>
+        <button type="button" data-f="Internationaal" aria-pressed="false" class="fi"><img src="icons/internationaal.png" alt="" width="24" height="24">Internationaal</button>
+        <button type="button" data-f="raakt" aria-pressed="false" class="fi"><img src="icons/fondsen.png" alt="" width="24" height="24">Mijn fondsen</button>
       </div>
       <div class="items" id="nieuws"></div>
       <h2 class="sec" style="margin-top: 10px;">Economie en beleid <small>politiek en centrale banken</small></h2>
@@ -293,21 +315,13 @@ nav.tabs button[aria-current="page"] { background: var(--sand); color: var(--ink
   }
   function chip(text, pct) { var c = el('span', 'chip num', text); var s = chipStyle(Number(pct) || 0); c.style.background = s.bg; c.style.color = s.fg; return c; }
 
-  var PH = { Nederland: '#D9893A', Internationaal: '#4F5932', economie: '#8C9640' };
-  function beeld(n, cls, alt) {
-    var b = el('div', 'beeld' + (cls ? ' ' + cls : ''));
-    var u = n && n.beeld && safeUrl(n.beeld.url);
-    if (u) {
-      var img = document.createElement('img'); img.src = u; img.alt = alt || ''; img.loading = 'lazy'; img.referrerPolicy = 'no-referrer';
-      img.onerror = function () { img.remove(); b.style.background = PH[n.categorie] || '#8C9640'; };
-      b.appendChild(img);
-      if (n.beeld.bron) b.appendChild(el('span', 'credit', n.beeld.bron));
-    } else {
-      b.style.background = (n && n._eco) ? PH.economie : (PH[n && n.categorie] || '#8C9640');
-      if (!cls) b.appendChild(el('div', 'ph', n && n.categorie ? n.categorie : ''));
-    }
-    return b;
-  }
+  // Icoon per rubriek: Nederland, Internationaal (economie), Beurs (internationaal beursnieuws), Mijn fondsen.
+  function icoonVoor(n) { return n.categorie === 'Nederland' ? 'icons/nederland.png' : (n._eco ? 'icons/internationaal.png' : 'icons/beurs.png'); }
+  function ico(n, size) { var i = document.createElement('img'); i.className = 'ico'; i.src = icoonVoor(n); i.alt = ''; i.width = size; i.height = size; return i; }
+  function rubriekVan(n) { return (n._eco ? 'Economie' : 'Beurs') + ' · ' + n.categorie; }
+  function raaktPill() { var p = el('span', 'raakt-pill'); var i = document.createElement('img'); i.src = 'icons/fondsen.png'; i.alt = ''; p.appendChild(i); p.appendChild(document.createTextNode('Raakt mij')); return p; }
+  function rubRow(n) { var r = el('span', 'rubrow'); r.appendChild(el('span', 'rubriek', rubriekVan(n))); if (n.raaktPortefeuille) r.appendChild(raaktPill()); return r; }
+  function impactRegel(n) { return n.raaktPortefeuille && n.portefeuilleImpact ? el('span', 'impactregel', n.portefeuilleImpact) : null; }
   function bronnen(list) {
     var box = el('div', 'bronnen');
     (list || []).forEach(function (b) { var u = safeUrl(b && b.url); if (!u) return; var a = el('a', null, (b.naam || 'Bron') + ' ↗'); a.href = u; a.target = '_blank'; a.rel = 'noopener noreferrer'; box.appendChild(a); });
@@ -320,15 +334,12 @@ nav.tabs button[aria-current="page"] { background: var(--sand); color: var(--ink
     var d = el('details', 'art');
     var s = document.createElement('summary');
     var tx = el('div', 'sum-tx');
-    var meta = el('div', 'meta');
-    meta.appendChild(el('span', 'rubriek', n._eco ? 'Economie · ' + n.categorie : n.categorie));
-    if (n.raaktPortefeuille) meta.appendChild(el('span', 'tag raakt', 'Mijn fondsen'));
-    tx.appendChild(meta); tx.appendChild(el('span', 'kop', n.kop)); tx.appendChild(el('span', 'kort', n.kort));
-    s.appendChild(tx); s.appendChild(beeld(n, 'thumb', ''));
+    tx.appendChild(rubRow(n)); tx.appendChild(el('span', 'kop', n.kop));
+    var ir = impactRegel(n); if (ir) tx.appendChild(ir);
+    s.appendChild(ico(n, 40)); s.appendChild(tx); var ch = el('span', 'chev', '›'); ch.setAttribute('aria-hidden', 'true'); s.appendChild(ch);
     d.appendChild(s);
     var body = el('div', 'body');
-    if (n.beeld && safeUrl(n.beeld.url)) body.appendChild(beeld(n, null, n.kop));
-    body.appendChild(el('p', 'detail', n.detail || n.kort));
+    body.appendChild(el('p', 'detail', (n.kort ? n.kort + ' ' : '') + (n.detail || '')));
     if (n.begrippen && n.begrippen.length) {
       var bg = el('div', 'begr'); bg.appendChild(el('span', 'bt', 'Begrippen uitgelegd'));
       n.begrippen.forEach(function (b) {
@@ -388,22 +399,27 @@ nav.tabs button[aria-current="page"] { background: var(--sand); color: var(--ink
     var lead = nieuws[0] || eco[0];
     var op = $('opening'); op.textContent = '';
     if (lead) {
-      var b = el('button', 'opening'); b.type = 'button';
-      b.appendChild(beeld(lead, null, lead.kop));
-      b.appendChild(el('span', 'rubriek', lead._eco ? 'Economie en beleid' : 'Beurs · ' + lead.categorie));
+      var b = el('button', 'open-kop'); b.type = 'button';
+      var t = el('span', 'top'); t.appendChild(ico(lead, 44)); t.appendChild(rubRow(lead)); b.appendChild(t);
       b.appendChild(el('h3', null, lead.kop));
       b.appendChild(el('p', null, lead.kort));
+      var ir = impactRegel(lead); if (ir) b.appendChild(ir);
       b.addEventListener('click', function () { openArtikel(lead); });
       op.appendChild(b);
     }
     var ras = $('raster'); ras.textContent = '';
-    alle.filter(function (n) { return n !== lead; }).slice(0, 4).forEach(function (n) {
-      var k = el('button', 'kaart'); k.type = 'button';
-      k.appendChild(beeld(n, 'klein', ''));
-      var tx = el('div', 'tx'); tx.appendChild(el('span', 'rubriek', n._eco ? 'Economie' : 'Beurs')); tx.appendChild(el('span', 'kop', n.kop)); k.appendChild(tx);
+    alle.filter(function (n) { return n !== lead; }).slice(0, 5).forEach(function (n) {
+      var k = el('button', 'lrij'); k.type = 'button';
+      k.appendChild(ico(n, 40));
+      var tx = el('span', 'sum-tx'); tx.appendChild(rubRow(n)); tx.appendChild(el('span', 'kop', n.kop));
+      var ir2 = impactRegel(n); if (ir2) tx.appendChild(ir2);
+      k.appendChild(tx); var pj = el('span', 'pijl', '›'); pj.setAttribute('aria-hidden', 'true'); k.appendChild(pj);
       k.addEventListener('click', function () { openArtikel(n); });
       ras.appendChild(k);
     });
+    var pf = data.portefeuille || {};
+    $('pb-e').textContent = pf.totaalEur || '–';
+    $('pb-p').textContent = (pf.totaalPct || '') + ' ›';
     agendaRows($('agenda-kort'), (data.agenda || []).slice(0, 3));
     var rl = $('risicos'); rl.textContent = '';
     (data.risicos || []).forEach(function (r) { rl.appendChild(el('div', 'risico', r)); });
@@ -466,6 +482,7 @@ nav.tabs button[aria-current="page"] { background: var(--sand); color: var(--ink
     try { history.replaceState(null, '', '#' + v); } catch (e) {}
   }
   document.querySelectorAll('nav.tabs button').forEach(function (b) { b.addEventListener('click', function () { show(b.getAttribute('data-v')); }); });
+  $('pbar').addEventListener('click', function () { show('port'); });
   document.querySelectorAll('.filters button').forEach(function (b) {
     b.addEventListener('click', function () {
       filter = b.getAttribute('data-f');
