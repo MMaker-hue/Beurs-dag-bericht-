@@ -3,464 +3,483 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#D5C9B4">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Beursdagbericht</title>
+<title>Vandaag in het nieuws</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,700;6..72,800&family=Inter:wght@400;500;600;700;800&display=swap">
 <style>
-/* Donker, Apple-achtig: zwarte achtergrond, glazen kaarten. Kleur heeft één betekenis per soort:
-   groen/rood = koersrichting; blauw = beurs; paars = economie en beleid; groen-accent = jouw portefeuille;
-   oranje = agenda/tijd; geel = speelruimte buiten Plan A; rood-accent = risico. */
+/* Thema: groen, zand, oranje. Kleur heeft betekenis:
+   koerslabels: donkergroen = sterk gestegen, mosgroen = licht gestegen, zand = vlak,
+   perzik = licht gedaald, oranje = sterk gedaald. Oranje tekst = rubriek. */
 :root {
-  --bg: #000000;
-  --glass: rgba(255,255,255,0.055);
-  --glass-2: rgba(255,255,255,0.085);
-  --stroke: rgba(255,255,255,0.09);
-  --hair: rgba(255,255,255,0.07);
-  --fg: #f5f5f7;
-  --soft: #c7c7cc;
-  --muted: #8e8e93;
-  --up: #30d158;
-  --down: #ff453a;
-  --beurs: #0a84ff;
-  --eco: #bf5af2;
-  --port: #30d158;
-  --agenda: #ff9f0a;
-  --spel: #ffd60a;
-  --risk: #ff453a;
-  --nl: #ff9f0a;
-  --int: #64d2ff;
-  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, system-ui, "Segoe UI", sans-serif;
-  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", Inter, system-ui, sans-serif;
-  color-scheme: dark;
+  --bg: #F6F3EE; --sand: #D5C9B4; --sand-2: #E8E0D2; --ink: #1E2214; --ink-2: #3A3F2C; --muted: #5F644C;
+  --olive: #4F5932; --moss: #8C9640; --orange: #D9893A; --rubriek: #9A5514;
+  --up: #2F5E22; --down: #A33A1A;
+  --serif: Newsreader, Georgia, "Times New Roman", serif;
+  --sans: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
 }
 * { box-sizing: border-box; }
-body {
-  margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 15px; line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  background-image:
-    radial-gradient(120% 60% at 50% -10%, rgba(10,132,255,0.16), transparent 60%),
-    radial-gradient(80% 40% at 100% 30%, rgba(191,90,242,0.08), transparent 70%);
-  background-attachment: fixed;
-}
+html, body { margin: 0; }
+body { background: var(--sand); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
 p { margin: 0; }
-.num { font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
-.wrap { max-width: 600px; margin: 0 auto; padding-block: 20px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 34px; }
-
-/* Glas */
-.card { background: linear-gradient(180deg, var(--glass-2), var(--glass)); border: 1px solid var(--stroke); border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 10px 30px rgba(0,0,0,0.35); -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%); }
-.pad { padding: 16px 18px; }
+button { font: inherit; color: inherit; }
+a { color: var(--ink); }
+:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+.num { font-variant-numeric: tabular-nums; }
 
 /* Kop */
-header { display: flex; flex-direction: column; gap: 10px; }
-.eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
-h1 { margin: 0; font-family: var(--font-display); font-size: 30px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.12; text-wrap: balance; }
-.hrow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
-.pill { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; padding: 6px 12px; border-radius: 999px; background: var(--glass-2); border: 1px solid var(--stroke); color: var(--soft); }
-.pill .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--up); box-shadow: 0 0 8px var(--up); }
-.melding { font-size: 13px; color: var(--spel); background: rgba(255,214,10,0.10); border: 1px solid rgba(255,214,10,0.25); border-radius: 12px; padding: 8px 12px; }
+.top { max-width: 640px; margin: 0 auto; padding: max(18px, env(safe-area-inset-top)) 20px 14px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.brand img { width: 48px; height: 48px; border-radius: 12px; border: 2px solid var(--ink); background: var(--bg); flex: 0 0 auto; }
+.brand h1 { margin: 0; font-family: var(--serif); font-weight: 800; font-size: 27px; line-height: 1; letter-spacing: -0.02em; }
+.stempel { flex: 0 0 auto; width: 84px; height: 84px; border-radius: 50%; border: 2px solid var(--ink); background: var(--orange); box-shadow: 3px 3px 0 var(--ink); transform: rotate(-8deg); display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; cursor: pointer; padding: 0; }
+.stempel .l1 { font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+.stempel .l2 { font-family: var(--serif); font-size: 22px; font-weight: 800; }
+.stempel .l3 { font-size: 10px; font-weight: 700; }
+.stempel[disabled] { opacity: 0.6; }
+
+/* Pagina */
+.sheet { background: var(--bg); border-top: 2px solid var(--ink); border-radius: 22px 22px 0 0; min-height: calc(100vh - 116px); }
+.wrap { max-width: 640px; margin: 0 auto; padding: 16px 18px 120px; display: flex; flex-direction: column; gap: 22px; }
+.melding { font-size: 13px; font-weight: 600; background: var(--sand-2); border: 1.5px solid var(--ink); border-radius: 10px; padding: 8px 12px; }
 .melding:empty { display: none; }
-#ververs { font: inherit; font-size: 14px; font-weight: 600; color: #fff; background: var(--beurs); border: 0; border-radius: 999px; padding: 8px 16px; min-height: 36px; cursor: pointer; box-shadow: 0 4px 14px rgba(10,132,255,0.35); }
-#ververs:disabled { opacity: 0.5; cursor: default; box-shadow: none; }
-#status { font-size: 12px; color: var(--muted); }
-
-/* Navigatie */
-nav.jump { position: sticky; top: 0; z-index: 5; margin: -14px -16px 0; padding: 10px 16px; background: rgba(0,0,0,0.6); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%); border-bottom: 1px solid var(--hair); display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
-nav.jump::-webkit-scrollbar { display: none; }
-nav.jump a { flex: 0 0 auto; font-size: 13px; font-weight: 600; text-decoration: none; color: var(--soft); padding: 6px 12px; border-radius: 999px; background: var(--glass); border: 1px solid var(--hair); display: inline-flex; align-items: center; gap: 6px; }
-nav.jump a::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--c); }
-
-/* Sectiekoppen */
-section { display: flex; flex-direction: column; gap: 14px; min-width: 0; scroll-margin-top: 64px; }
-.sh { margin: 0; display: flex; align-items: center; gap: 12px; font-family: var(--font-display); font-size: 24px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; }
-.sh .ic { flex: 0 0 auto; width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: var(--c); box-shadow: 0 6px 18px color-mix(in srgb, var(--c) 40%, transparent); }
-.sh .ic svg { width: 19px; height: 19px; stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.sh small { display: block; font-family: var(--font); font-size: 13px; font-weight: 500; letter-spacing: 0; color: var(--muted); margin-top: 2px; }
-.band { height: 3px; border-radius: 3px; background: linear-gradient(90deg, var(--c), transparent 70%); margin-top: -6px; }
+#status { font-size: 12px; color: var(--muted); margin-top: -12px; }
+#status:empty { display: none; }
+.rubriek { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rubriek); }
+h2.sec { margin: 0; font-family: var(--serif); font-size: 24px; font-weight: 800; display: flex; align-items: baseline; justify-content: space-between; gap: 8px; border-bottom: 2px solid var(--ink); padding-bottom: 6px; }
+h2.sec small { font-family: var(--sans); font-size: 12px; font-weight: 500; color: var(--muted); }
 .note { font-size: 13px; color: var(--muted); }
+.section { display: flex; flex-direction: column; gap: 12px; }
 
-.lead { font-size: 17px; line-height: 1.55; color: var(--fg); }
+/* Koerslabels */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 12px; font-weight: 700; border: 1.5px solid var(--ink); border-radius: 999px; padding: 4px 10px; white-space: nowrap; }
 
-/* Markten */
-.mlist { padding: 4px 16px; }
-.mrow { display: grid; grid-template-columns: minmax(0, 1fr) auto 84px; column-gap: 12px; align-items: center; padding: 11px 0; border-bottom: 1px solid var(--hair); }
-.mrow:last-child { border-bottom: 0; }
-.mrow .name { font-weight: 600; font-size: 15px; }
-.mrow .name small { display: block; font-size: 12px; color: var(--muted); font-weight: 400; }
-.mrow .val { text-align: right; font-size: 15px; font-weight: 500; }
-.chg { text-align: center; font-size: 14px; font-weight: 700; padding: 5px 0; border-radius: 8px; color: #fff; }
+/* Samenvatting */
+.lead-card { background: #FFFFFF; border: 2px solid var(--ink); border-radius: 14px; padding: 14px 16px; font-family: var(--serif); font-size: 17px; line-height: 1.5; color: var(--ink-2); }
 
-/* Filters */
+/* Beeld */
+.beeld { position: relative; border: 2px solid var(--ink); border-radius: 14px; overflow: hidden; background: var(--moss); }
+.beeld img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.beeld .credit { position: absolute; left: 8px; bottom: 8px; max-width: calc(100% - 16px); font-size: 10px; line-height: 1.3; background: rgba(246,243,238,0.92); color: var(--ink); border-radius: 4px; padding: 2px 6px; }
+.beeld .ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-weight: 800; font-size: 20px; color: rgba(246,243,238,0.9); text-align: center; padding: 10px; }
+
+/* Openingsbericht */
+.opening { display: flex; flex-direction: column; gap: 8px; cursor: pointer; background: none; border: 0; padding: 0; text-align: left; }
+.opening .beeld { height: 200px; }
+.opening h3 { margin: 0; font-family: var(--serif); font-size: 26px; font-weight: 800; line-height: 1.12; }
+.opening p { font-family: var(--serif); font-size: 16px; color: var(--ink-2); }
+
+/* Kaartenraster */
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.kaart { border: 2px solid var(--ink); border-radius: 14px; overflow: hidden; background: #FFFFFF; display: flex; flex-direction: column; text-align: left; padding: 0; cursor: pointer; }
+.kaart .beeld { height: 84px; border: 0; border-bottom: 2px solid var(--ink); border-radius: 0; }
+.kaart .tx { padding: 8px 10px 10px; display: flex; flex-direction: column; gap: 3px; }
+.kaart .kop { font-family: var(--serif); font-size: 15px; font-weight: 700; line-height: 1.22; }
+
+/* Tabs/filters */
 .filters { display: flex; flex-wrap: wrap; gap: 6px; }
-.filters button { font: inherit; font-size: 13px; font-weight: 600; color: var(--soft); background: var(--glass); border: 1px solid var(--stroke); border-radius: 999px; padding: 7px 13px; min-height: 36px; cursor: pointer; }
-.filters button[aria-pressed="true"] { background: var(--c); border-color: var(--c); color: #fff; }
-button:focus-visible, summary:focus-visible, a:focus-visible { outline: 2px solid var(--beurs); outline-offset: 2px; }
+.filters button { font-size: 13px; font-weight: 700; border: 1.5px solid var(--ink); background: var(--bg); border-radius: 999px; padding: 7px 13px; min-height: 38px; cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
 
-/* Nieuws */
-.news { display: flex; flex-direction: column; gap: 10px; }
-details.item { border-radius: 18px; overflow: hidden; position: relative; }
-details.item::before { content: ""; position: absolute; left: 0; top: 14px; bottom: 14px; width: 3px; border-radius: 0 3px 3px 0; background: var(--c); }
-details.item summary { list-style: none; cursor: pointer; padding: 14px 16px 14px 18px; display: grid; grid-template-columns: minmax(0, 1fr) 18px; column-gap: 10px; }
-details.item summary::-webkit-details-marker { display: none; }
-.meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 6px; }
-.chip { font-size: 11px; font-weight: 700; letter-spacing: 0.02em; padding: 2px 8px; border-radius: 999px; }
-.chip.nl { color: var(--nl); background: rgba(255,159,10,0.14); }
-.chip.int { color: var(--int); background: rgba(100,210,255,0.13); }
-.chip.raakt { color: var(--port); background: rgba(48,209,88,0.14); }
-.kop { font-weight: 700; font-size: 17px; line-height: 1.3; letter-spacing: -0.01em; }
-.kort { font-size: 14px; color: var(--soft); margin-top: 4px; }
-.chev { color: var(--muted); font-size: 20px; line-height: 1; transition: transform 0.2s ease; margin-top: 2px; }
-details[open] .chev { transform: rotate(90deg); }
-.body { padding: 0 16px 16px 18px; display: flex; flex-direction: column; gap: 12px; }
-.detail { font-size: 15px; color: var(--fg); }
-.lesbegrip { font-size: 14px; color: var(--soft); background: rgba(191,90,242,0.10); border-radius: 12px; padding: 10px 12px; }
-.lesbegrip b { color: var(--eco); font-weight: 700; }
-.begr { display: flex; flex-direction: column; gap: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--hair); border-radius: 14px; padding: 12px 14px; }
-.begr .bt { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
-.begr .term { font-size: 14px; font-weight: 700; color: var(--fg); }
-.begr .uitleg { font-size: 14px; color: var(--soft); }
-.begr .gevolg { font-size: 14px; color: var(--soft); margin-top: 2px; }
-.begr .gevolg b { color: var(--c); font-weight: 700; }
-.sources { display: flex; flex-wrap: wrap; gap: 8px; }
-.sources a { font-size: 13px; font-weight: 600; color: var(--beurs); text-decoration: none; background: rgba(10,132,255,0.12); border-radius: 999px; padding: 6px 12px; min-height: 32px; display: inline-flex; align-items: center; }
-.empty { font-size: 14px; color: var(--muted); padding: 6px 2px; }
+/* Artikelen */
+.items { display: flex; flex-direction: column; gap: 12px; }
+details.art { border: 2px solid var(--ink); border-radius: 14px; background: #FFFFFF; overflow: hidden; }
+details.art summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) 84px; gap: 12px; padding: 12px; }
+details.art summary::-webkit-details-marker { display: none; }
+details.art .sum-tx { display: flex; flex-direction: column; gap: 4px; }
+details.art .kop { font-family: var(--serif); font-size: 18px; font-weight: 700; line-height: 1.2; }
+details.art .kort { font-size: 14px; color: var(--ink-2); }
+details.art .thumb { width: 84px; height: 84px; border-radius: 10px; }
+details.art .meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.tag { font-size: 10px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; border-radius: 999px; padding: 2px 8px; border: 1.5px solid var(--ink); }
+.tag.raakt { background: var(--moss); color: var(--ink); }
+details.art .body { padding: 0 14px 14px; display: flex; flex-direction: column; gap: 12px; }
+details.art .body .beeld { height: 190px; }
+details.art .detail { font-family: var(--serif); font-size: 17px; line-height: 1.55; color: var(--ink); }
+.les { font-size: 14px; background: var(--sand-2); border-radius: 10px; padding: 10px 12px; }
+.les b { color: var(--rubriek); }
+.begr { border-top: 2px solid var(--ink); padding-top: 10px; display: flex; flex-direction: column; gap: 10px; }
+.begr .bt { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
+.begr .term { font-size: 15px; font-weight: 700; }
+.begr .uitleg, .begr .gevolg { font-size: 14px; color: var(--ink-2); }
+.begr .gevolg b { color: var(--rubriek); }
+.bronnen { display: flex; flex-wrap: wrap; gap: 8px; }
+.bronnen a { font-size: 13px; font-weight: 700; text-decoration: none; border: 1.5px solid var(--ink); border-radius: 999px; padding: 7px 13px; min-height: 36px; display: inline-flex; align-items: center; background: var(--bg); }
+
+/* Tabellen */
+.tabel { background: #FFFFFF; border: 2px solid var(--ink); border-radius: 14px; overflow: hidden; }
+.rij { display: grid; grid-template-columns: minmax(0, 1fr) auto 84px; gap: 10px; align-items: center; padding: 10px 14px; border-bottom: 1.5px solid var(--sand); }
+.rij:last-child { border-bottom: 0; }
+.rij .nm { font-weight: 600; font-size: 14px; }
+.rij .nm small { display: block; font-size: 11px; font-weight: 400; color: var(--muted); }
+.rij .v { font-size: 14px; text-align: right; }
+.rij .chip { text-align: center; }
+.prow { display: grid; grid-template-columns: minmax(0, 1fr) 60px 70px; gap: 10px; padding: 10px 14px; border-bottom: 1.5px solid var(--sand); font-size: 14px; }
+.prow:last-child { border-bottom: 0; }
+.prow span:not(:first-child) { text-align: right; font-weight: 700; }
+.up { color: var(--up); } .down { color: var(--down); }
 
 /* Portefeuille */
-.tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-.tile { padding: 14px 16px; display: flex; flex-direction: column; gap: 2px; }
-.tile .lab { font-size: 12px; font-weight: 600; color: var(--muted); }
-.tile .big { font-family: var(--font-display); font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
-.plist { padding: 4px 16px; }
-.prow { display: grid; grid-template-columns: minmax(0, 1fr) 64px 70px; column-gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--hair); font-size: 14px; align-items: center; }
-.prow:last-child { border-bottom: 0; }
-.prow span:not(:first-child) { text-align: right; font-weight: 600; }
-.up { color: var(--up); } .down { color: var(--down); }
-.alloc { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
-.atitle { font-size: 13px; font-weight: 700; color: var(--soft); }
-.arow { display: grid; grid-template-columns: 78px minmax(0, 1fr) 82px; column-gap: 10px; align-items: center; font-size: 14px; }
-.arow .lbl { color: var(--soft); font-weight: 600; }
-.arow .fig { text-align: right; color: var(--soft); font-size: 13px; }
-.bar { position: relative; height: 10px; background: rgba(255,255,255,0.08); border-radius: 6px; }
-.bar .fill { position: absolute; left: 0; top: 0; height: 10px; border-radius: 6px; }
-.bar .target { position: absolute; top: -4px; width: 2px; height: 18px; border-radius: 1px; background: #fff; }
-.tag { display: inline-block; margin-left: 6px; font-size: 10px; font-weight: 800; letter-spacing: 0.03em; color: #000; background: var(--agenda); border-radius: 999px; padding: 1px 6px; vertical-align: 1px; }
-.legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; color: var(--muted); }
-.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+.result { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.result .vak { border: 2px solid var(--ink); border-radius: 14px; background: #FFFFFF; padding: 12px 14px; display: flex; flex-direction: column; }
+.result .lab { font-size: 12px; font-weight: 700; color: var(--muted); }
+.result .groot { font-family: var(--serif); font-size: 32px; font-weight: 800; line-height: 1.1; }
+.verd { background: #FFFFFF; border: 2px solid var(--ink); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+.vrij { display: grid; grid-template-columns: 76px minmax(0, 1fr) 82px; gap: 10px; align-items: center; font-size: 14px; }
+.vrij .lbl { font-weight: 700; }
+.bar { position: relative; height: 12px; background: var(--sand-2); border: 1.5px solid var(--ink); border-radius: 999px; }
+.bar .fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; }
+.bar .doel { position: absolute; top: -5px; width: 3px; height: 20px; background: var(--ink); border-radius: 2px; }
+.vrij .fig { text-align: right; font-size: 13px; color: var(--muted); }
+.inleg { display: inline-block; font-size: 10px; font-weight: 800; letter-spacing: 0.04em; border: 1.5px solid var(--ink); background: var(--orange); border-radius: 999px; padding: 1px 6px; margin-top: 3px; }
 
 /* Agenda */
-.alist { padding: 4px 16px; }
-.arow2 { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; column-gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--hair); }
-.arow2:last-child { border-bottom: 0; }
-.date { text-align: center; border-radius: 12px; padding: 6px 0; background: rgba(255,159,10,0.12); color: var(--agenda); font-size: 12px; font-weight: 700; line-height: 1.2; }
-.ev { font-size: 15px; font-weight: 600; }
-.sub { font-size: 13px; color: var(--muted); }
-.belang { font-size: 11px; font-weight: 800; letter-spacing: 0.03em; padding: 4px 9px; border-radius: 999px; white-space: nowrap; }
-.belang.hoog { color: #fff; background: var(--down); }
-.belang.middel { color: #000; background: var(--agenda); }
-.belang.laag { color: var(--soft); background: rgba(255,255,255,0.10); }
+.ag { display: grid; grid-template-columns: 66px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 11px 14px; border-bottom: 1.5px solid var(--sand); }
+.ag:last-child { border-bottom: 0; }
+.ag .d { font-size: 12px; font-weight: 800; text-align: center; background: var(--sand-2); border-radius: 10px; padding: 5px 0; }
+.ag .ev { font-size: 14px; font-weight: 700; }
+.ag .sub { font-size: 12px; color: var(--muted); }
+.impact { font-size: 11px; font-weight: 800; border: 1.5px solid var(--ink); border-radius: 999px; padding: 3px 9px; white-space: nowrap; }
+.impact.hoog { background: var(--orange); }
+.impact.middel { background: #F2C9A4; }
+.impact.laag { background: var(--sand-2); }
 
-/* Blokken */
-.box { padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; font-size: 15px; }
-.box dl { margin: 0; display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 8px 12px; font-size: 14px; }
-.box dt { color: var(--muted); }
-.box dd { margin: 0; }
-.disclaimer { font-size: 12px; color: var(--muted); }
-ul.risks { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
-ul.risks li { padding: 12px 14px 12px 16px; font-size: 15px; position: relative; }
-ul.risks li::before { content: ""; position: absolute; left: 0; top: 12px; bottom: 12px; width: 3px; border-radius: 0 3px 3px 0; background: var(--risk); }
-footer { font-size: 12px; color: var(--muted); text-align: center; padding-top: 8px; }
-#lock { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 24px; background: #000; background-image: radial-gradient(120% 60% at 50% -10%, rgba(10,132,255,0.18), transparent 60%); }
+/* Kaders */
+.blok { background: #FFFFFF; border: 2px solid var(--ink); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+.blok dl { margin: 0; display: grid; grid-template-columns: 116px minmax(0, 1fr); gap: 8px 12px; font-size: 14px; }
+.blok dt { color: var(--muted); }
+.blok dd { margin: 0; }
+.risico { background: #FFFFFF; border: 2px solid var(--ink); border-radius: 14px; padding: 12px 14px; font-size: 15px; display: grid; grid-template-columns: 10px minmax(0, 1fr); gap: 10px; }
+.risico::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--orange); border: 1.5px solid var(--ink); margin-top: 6px; }
+footer { font-size: 12px; color: var(--muted); text-align: center; }
+
+/* Menubalk */
+nav.tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; background: var(--olive); padding: 10px 8px max(14px, env(safe-area-inset-bottom)); }
+nav.tabs .in { max-width: 640px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+nav.tabs button { border: 0; background: transparent; color: var(--bg); font-size: 13px; font-weight: 600; border-radius: 999px; padding: 11px 0; min-height: 44px; cursor: pointer; }
+nav.tabs button[aria-current="page"] { background: var(--sand); color: var(--ink); font-weight: 800; }
+
+/* Slot */
+#lock { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 24px; background: var(--sand); }
 #lock[hidden] { display: none; }
-#lock form { width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 14px; padding: 22px; }
-#lock h2 { margin: 0; font-family: var(--font-display); font-size: 24px; font-weight: 800; }
-#lock input { font: inherit; font-size: 16px; color: var(--fg); background: rgba(255,255,255,0.08); border: 1px solid var(--stroke); border-radius: 12px; padding: 12px 14px; }
-#lock button { font: inherit; font-size: 16px; font-weight: 700; color: #fff; background: var(--beurs); border: 0; border-radius: 12px; padding: 12px; cursor: pointer; }
+#lock form { width: 100%; max-width: 360px; background: var(--bg); border: 2px solid var(--ink); border-radius: 18px; box-shadow: 5px 5px 0 var(--ink); padding: 22px; display: flex; flex-direction: column; gap: 14px; }
+#lock img { width: 72px; height: 72px; border-radius: 16px; border: 2px solid var(--ink); }
+#lock h2 { margin: 0; font-family: var(--serif); font-size: 26px; font-weight: 800; }
+#lock label { font-size: 13px; color: var(--muted); }
+#lock input { font: inherit; font-size: 16px; border: 2px solid var(--ink); border-radius: 10px; padding: 12px; background: #FFFFFF; color: var(--ink); }
+#lock button { font-size: 16px; font-weight: 800; border: 2px solid var(--ink); background: var(--orange); border-radius: 10px; padding: 12px; cursor: pointer; }
 #lockmsg { font-size: 13px; color: var(--down); min-height: 1em; }
-.wrap { padding-top: max(20px, env(safe-area-inset-top, 0px)); }
-nav.jump { top: env(safe-area-inset-top, 0px); }
-@media (prefers-reduced-motion: reduce) { .chev { transition: none; } }
-@media (max-width: 380px) { h1 { font-size: 26px; } .sh { font-size: 22px; } .mrow { grid-template-columns: minmax(0,1fr) auto 76px; } }
+.empty { font-size: 14px; color: var(--muted); }
+[hidden] { display: none !important; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
 </style>
 </head>
 <body>
-<div id="lock" hidden><form class="card" id="lockform" autocomplete="off"><h2>Beursdagbericht</h2><p class="note">Voer je code in. De app onthoudt hem op dit toestel.</p><input id="code" type="password" autocomplete="current-password" aria-label="Code" required><button type="submit">Openen</button><p id="lockmsg" role="alert"></p></form></div>
 
-<div class="wrap" id="app">
-  <header>
-    <p class="eyebrow">Dagbericht beurs en economie</p>
-    <h1 id="titel">Laden…</h1>
-    <div class="hrow">
-      <span class="pill"><span class="dot" aria-hidden="true"></span><span id="bijgewerkt">—</span></span>
-      <button type="button" id="ververs">Vernieuwen</button>
-    </div>
-    <p class="melding" id="opmerking"></p>
-    <span id="status" aria-live="polite">Nieuwe edities op werkdagen tussen 10:45 en 21:45.</span>
-  </header>
-
-  <nav class="jump" aria-label="Ga naar">
-    <a href="#s-markt" style="--c: var(--beurs)">Markten</a>
-    <a href="#s-beurs" style="--c: var(--beurs)">Beursnieuws</a>
-    <a href="#s-eco" style="--c: var(--eco)">Economie</a>
-    <a href="#s-port" style="--c: var(--port)">Portefeuille</a>
-    <a href="#s-ag" style="--c: var(--agenda)">Agenda</a>
-    <a href="#s-plan" style="--c: var(--port)">Plan A</a>
-    <a href="#s-risk" style="--c: var(--risk)">Risico's</a>
-  </nav>
-
-  <section aria-label="Samenvatting">
-    <div class="card pad"><p class="lead" id="samenvatting"></p></div>
-  </section>
-
-  <section id="s-markt" style="--c: var(--beurs)">
-    <h2 class="sh"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 17l5-5 4 4 8-8"/><path d="M14 8h6v6"/></svg></span>Markten</h2>
-    <div class="card mlist" id="markten"></div>
-    <p class="note" id="mtoel"></p>
-  </section>
-
-  <section id="s-beurs" style="--c: var(--beurs)">
-    <h2 class="sh"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h10M7 16h6"/></svg></span><span>Beursnieuws<small>Bedrijven en markten</small></span></h2>
-    <div class="band"></div>
-    <div class="filters" role="group" aria-label="Filter beursnieuws">
-      <button type="button" data-f="alles" aria-pressed="true">Alles</button>
-      <button type="button" data-f="Nederland" aria-pressed="false">Nederland</button>
-      <button type="button" data-f="Internationaal" aria-pressed="false">Internationaal</button>
-      <button type="button" data-f="raakt" aria-pressed="false">Raakt mijn portefeuille</button>
-    </div>
-    <div class="news" id="nieuws"></div>
-  </section>
-
-  <section id="s-eco" style="--c: var(--eco)">
-    <h2 class="sh"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 10l9-6 9 6"/><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/></svg></span><span>Economie en beleid<small>Politiek, overheid en centrale banken</small></span></h2>
-    <div class="band"></div>
-    <div class="news" id="economie"></div>
-  </section>
-
-  <section id="s-port" style="--c: var(--port)">
-    <h2 class="sh"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9h-9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/></svg></span>Portefeuille</h2>
-    <div id="portefeuille" style="display:flex;flex-direction:column;gap:10px"></div>
-  </section>
-
-  <section id="s-ag" style="--c: var(--agenda)">
-    <h2 class="sh"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>Agenda</h2>
-    <div class="card alist" id="agenda"></div>
-    <p class="note" id="inspelen"></p>
-  </section>
-
-  <section id="s-plan" style="--c: var(--port)">
-    <h2 class="sh"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.5"/></svg></span>Plan A</h2>
-    <div class="card pad"><p id="plana"></p></div>
-  </section>
-
-  <section id="s-kt" style="--c: var(--spel)">
-    <h2 class="sh"><span class="ic"><svg viewBox="0 0 24 24" style="stroke:#000"><path d="M13 3L5 13h6l-1 8 8-10h-6z"/></svg></span><span>Kortetermijnidee<small>Speelruimte, buiten Plan A</small></span></h2>
-    <div id="kortetermijn"></div>
-  </section>
-
-  <section id="s-risk" style="--c: var(--risk)">
-    <h2 class="sh"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17v.5"/></svg></span>Risico's</h2>
-    <ul class="risks" id="risicos"></ul>
-  </section>
-
-  <footer>Hypothetische analyse, geen persoonlijk beleggingsadvies.</footer>
+<div id="lock" hidden>
+  <form id="lockform" autocomplete="off">
+    <img src="icon-192.png" alt="">
+    <h2>Vandaag in het nieuws</h2>
+    <label for="code">Voer je code in. De app onthoudt hem op dit toestel.</label>
+    <input id="code" type="password" autocomplete="current-password" required>
+    <button type="submit">Openen</button>
+    <p id="lockmsg" role="alert"></p>
+  </form>
 </div>
+
+<header class="top">
+  <div class="brand">
+    <img src="icon-192.png" alt="" width="48" height="48">
+    <h1>Vandaag in<br>het nieuws</h1>
+  </div>
+  <button type="button" class="stempel" id="ververs" aria-label="Nieuwste editie ophalen">
+    <span class="l1">Editie</span><span class="l2" id="st-tijd">--:--</span><span class="l3" id="st-dag"></span>
+  </button>
+</header>
+
+<main class="sheet">
+  <div class="wrap">
+    <p class="melding" id="opmerking"></p>
+    <p id="status" aria-live="polite"></p>
+
+    <!-- Vandaag -->
+    <section id="v-vandaag" class="section" aria-label="Vandaag">
+      <div class="chips" id="chips-top"></div>
+      <div class="lead-card" id="samenvatting"></div>
+      <div id="opening"></div>
+      <div class="grid2" id="raster"></div>
+      <div class="section">
+        <h2 class="sec">Agenda <small>komende dagen</small></h2>
+        <div class="tabel" id="agenda-kort"></div>
+      </div>
+      <div class="section">
+        <h2 class="sec">Risico's</h2>
+        <div class="items" id="risicos"></div>
+      </div>
+    </section>
+
+    <!-- Nieuws -->
+    <section id="v-nieuws" class="section" aria-label="Nieuws" hidden>
+      <h2 class="sec">Beursnieuws <small>bedrijven en markten</small></h2>
+      <div class="filters" role="group" aria-label="Filter beursnieuws">
+        <button type="button" data-f="alles" aria-pressed="true">Alles</button>
+        <button type="button" data-f="Nederland" aria-pressed="false">Nederland</button>
+        <button type="button" data-f="Internationaal" aria-pressed="false">Internationaal</button>
+        <button type="button" data-f="raakt" aria-pressed="false">Mijn fondsen</button>
+      </div>
+      <div class="items" id="nieuws"></div>
+      <h2 class="sec" style="margin-top: 10px;">Economie en beleid <small>politiek en centrale banken</small></h2>
+      <div class="items" id="economie"></div>
+    </section>
+
+    <!-- Markten -->
+    <section id="v-markten" class="section" aria-label="Markten" hidden>
+      <h2 class="sec">Markten <small id="m-tijd"></small></h2>
+      <div class="tabel" id="markten"></div>
+      <p class="note" id="mtoel"></p>
+      <h2 class="sec" style="margin-top: 10px;">Agenda</h2>
+      <div class="tabel" id="agenda"></div>
+      <p class="note" id="inspelen"></p>
+    </section>
+
+    <!-- Portefeuille -->
+    <section id="v-port" class="section" aria-label="Portefeuille" hidden>
+      <h2 class="sec">Mijn portefeuille</h2>
+      <div class="result" id="result"></div>
+      <div class="tabel" id="posities"></div>
+      <div class="verd" id="verdeling"></div>
+      <p class="note" id="ptoel"></p>
+      <h2 class="sec" style="margin-top: 10px;">Plan A</h2>
+      <div class="blok"><p id="plana"></p></div>
+      <h2 class="sec" style="margin-top: 10px;">Kortetermijnidee <small>buiten Plan A</small></h2>
+      <div class="blok" id="kortetermijn"></div>
+    </section>
+
+    <footer>Hypothetische analyse, geen persoonlijk beleggingsadvies.</footer>
+  </div>
+</main>
+
+<nav class="tabs" aria-label="Hoofdmenu">
+  <div class="in">
+    <button type="button" data-v="vandaag" aria-current="page">Vandaag</button>
+    <button type="button" data-v="nieuws">Nieuws</button>
+    <button type="button" data-v="markten">Markten</button>
+    <button type="button" data-v="port">Portefeuille</button>
+  </div>
+</nav>
 
 <script>
 (function () {
-  function el(tag, cls, text) {
-    var n = document.createElement(tag);
-    if (cls) n.className = cls;
-    if (text !== undefined && text !== null) n.textContent = String(text);
-    return n;
-  }
-  function safeUrl(u) { return typeof u === 'string' && /^https?:\/\//i.test(u) ? u : null; }
-  // Kleur van de koersverandering: groen of rood, sterker naarmate de beweging groter is.
-  function chgColor(p) {
-    if (p === 0) return 'rgba(255,255,255,0.16)';
-    var a = Math.min(1, 0.45 + Math.abs(p) / 3);
-    return p > 0 ? 'rgba(48,209,88,' + a + ')' : 'rgba(255,69,58,' + a + ')';
-  }
+  function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined && text !== null) n.textContent = String(text); return n; }
+  function $(id) { return document.getElementById(id); }
+  function safeUrl(u) { return typeof u === 'string' && /^https:\/\//i.test(u) ? u : null; }
   function dirClass(r) { return r > 0 ? 'up' : (r < 0 ? 'down' : ''); }
-  function sourcesBlock(list) {
-    var box = el('div', 'sources');
-    (list || []).forEach(function (b) {
-      var u = safeUrl(b && b.url); if (!u) return;
-      var a = el('a', null, (b.naam || 'Bron') + ' ↗');
-      a.href = u; a.target = '_blank'; a.rel = 'noopener noreferrer';
-      box.appendChild(a);
-    });
+  function fmt(x) { return String(x).replace('.', ','); }
+
+  // Koerslabel: kleur volgt richting en grootte van de beweging.
+  function chipStyle(p) {
+    if (p >= 1) return { bg: '#4F5932', fg: '#F6F3EE' };
+    if (p > 0) return { bg: '#C9D08E', fg: '#1E2214' };
+    if (p <= -1) return { bg: '#D9893A', fg: '#1E2214' };
+    if (p < 0) return { bg: '#F2C9A4', fg: '#1E2214' };
+    return { bg: '#D5C9B4', fg: '#1E2214' };
+  }
+  function chip(text, pct) { var c = el('span', 'chip num', text); var s = chipStyle(Number(pct) || 0); c.style.background = s.bg; c.style.color = s.fg; return c; }
+
+  var PH = { Nederland: '#D9893A', Internationaal: '#4F5932', economie: '#8C9640' };
+  function beeld(n, cls, alt) {
+    var b = el('div', 'beeld' + (cls ? ' ' + cls : ''));
+    var u = n && n.beeld && safeUrl(n.beeld.url);
+    if (u) {
+      var img = document.createElement('img'); img.src = u; img.alt = alt || ''; img.loading = 'lazy'; img.referrerPolicy = 'no-referrer';
+      img.onerror = function () { img.remove(); b.style.background = PH[n.categorie] || '#8C9640'; };
+      b.appendChild(img);
+      if (n.beeld.bron) b.appendChild(el('span', 'credit', n.beeld.bron));
+    } else {
+      b.style.background = (n && n._eco) ? PH.economie : (PH[n && n.categorie] || '#8C9640');
+      if (!cls) b.appendChild(el('div', 'ph', n && n.categorie ? n.categorie : ''));
+    }
+    return b;
+  }
+  function bronnen(list) {
+    var box = el('div', 'bronnen');
+    (list || []).forEach(function (b) { var u = safeUrl(b && b.url); if (!u) return; var a = el('a', null, (b.naam || 'Bron') + ' ↗'); a.href = u; a.target = '_blank'; a.rel = 'noopener noreferrer'; box.appendChild(a); });
     return box;
   }
 
-  var data = null, filter = 'alles';
+  var data = null, filter = 'alles', view = 'vandaag';
 
-  function renderNews() {
-    var items = (data.nieuws || []).filter(function (n) {
-      if (filter === 'alles') return true;
-      if (filter === 'raakt') return !!n.raaktPortefeuille;
-      return n.categorie === filter;
-    });
-    renderItems(document.getElementById('nieuws'), items, 'Geen berichten in deze categorie.');
+  function artikel(n) {
+    var d = el('details', 'art');
+    var s = document.createElement('summary');
+    var tx = el('div', 'sum-tx');
+    var meta = el('div', 'meta');
+    meta.appendChild(el('span', 'rubriek', n._eco ? 'Economie · ' + n.categorie : n.categorie));
+    if (n.raaktPortefeuille) meta.appendChild(el('span', 'tag raakt', 'Mijn fondsen'));
+    tx.appendChild(meta); tx.appendChild(el('span', 'kop', n.kop)); tx.appendChild(el('span', 'kort', n.kort));
+    s.appendChild(tx); s.appendChild(beeld(n, 'thumb', ''));
+    d.appendChild(s);
+    var body = el('div', 'body');
+    if (n.beeld && safeUrl(n.beeld.url)) body.appendChild(beeld(n, null, n.kop));
+    body.appendChild(el('p', 'detail', n.detail || n.kort));
+    if (n.begrippen && n.begrippen.length) {
+      var bg = el('div', 'begr'); bg.appendChild(el('span', 'bt', 'Begrippen uitgelegd'));
+      n.begrippen.forEach(function (b) {
+        if (!b || !b.term) return; var w = el('div');
+        w.appendChild(el('div', 'term', b.term));
+        if (b.uitleg) w.appendChild(el('p', 'uitleg', b.uitleg));
+        if (b.gevolg) { var g = el('p', 'gevolg'); g.appendChild(el('b', null, 'Gevolg: ')); g.appendChild(document.createTextNode(b.gevolg)); w.appendChild(g); }
+        bg.appendChild(w);
+      });
+      body.appendChild(bg);
+    }
+    if (n.lesbegrip) { var l = el('p', 'les'); l.appendChild(el('b', null, 'Voor in de les: ')); l.appendChild(document.createTextNode(n.lesbegrip)); body.appendChild(l); }
+    body.appendChild(bronnen(n.bronnen));
+    d.appendChild(body);
+    return d;
+  }
+  function openArtikel(n) {
+    show('nieuws');
+    setTimeout(function () {
+      var all = document.querySelectorAll('details.art');
+      for (var i = 0; i < all.length; i++) { if (all[i]._item === n) { all[i].open = true; all[i].scrollIntoView({ block: 'start', behavior: 'smooth' }); break; } }
+    }, 30);
   }
 
-  function renderItems(host, items, emptyText) {
+  function renderNieuws() {
+    var host = $('nieuws'); host.textContent = '';
+    var items = (data.nieuws || []).filter(function (n) { return filter === 'alles' ? true : filter === 'raakt' ? !!n.raaktPortefeuille : n.categorie === filter; });
+    if (!items.length) host.appendChild(el('p', 'empty', 'Geen berichten in deze categorie.'));
+    items.forEach(function (n) { var a = artikel(n); a._item = n; host.appendChild(a); });
+  }
+
+  function agendaRows(host, list) {
     host.textContent = '';
-    if (!items.length) { host.appendChild(el('p', 'empty', emptyText)); return; }
-    items.forEach(function (n) {
-      var d = el('details', 'item card');
-      var s = document.createElement('summary');
-      var left = el('div');
-      var meta = el('div', 'meta');
-      meta.appendChild(el('span', 'chip ' + (n.categorie === 'Nederland' ? 'nl' : 'int'), n.categorie));
-      if (n.raaktPortefeuille) meta.appendChild(el('span', 'chip raakt', 'Raakt portefeuille'));
-      left.appendChild(meta);
-      left.appendChild(el('div', 'kop', n.kop));
-      left.appendChild(el('div', 'kort', n.kort));
-      s.appendChild(left);
-      var chev = el('span', 'chev', '›'); chev.setAttribute('aria-hidden', 'true');
-      s.appendChild(chev);
-      d.appendChild(s);
-      var body = el('div', 'body');
-      body.appendChild(el('p', 'detail', n.detail || n.kort));
-      if (n.begrippen && n.begrippen.length) {
-        var bg = el('div', 'begr');
-        bg.appendChild(el('div', 'bt', 'Begrippen uitgelegd'));
-        n.begrippen.forEach(function (b) {
-          if (!b || !b.term) return;
-          var w = el('div');
-          w.appendChild(el('div', 'term', b.term));
-          if (b.uitleg) w.appendChild(el('p', 'uitleg', b.uitleg));
-          if (b.gevolg) { var g = el('p', 'gevolg'); g.appendChild(el('b', null, 'Gevolg: ')); g.appendChild(document.createTextNode(b.gevolg)); w.appendChild(g); }
-          bg.appendChild(w);
-        });
-        body.appendChild(bg);
-      }
-      if (n.lesbegrip) { var lb = el('p', 'lesbegrip'); lb.appendChild(el('b', null, 'Voor in de les: ')); lb.appendChild(document.createTextNode(n.lesbegrip)); body.appendChild(lb); }
-      body.appendChild(sourcesBlock(n.bronnen));
-      d.appendChild(body);
-      host.appendChild(d);
+    if (!list.length) { host.appendChild(el('p', 'empty', 'Geen agendapunten.')); host.style.padding = '12px 14px'; return; }
+    list.forEach(function (a) {
+      var r = el('div', 'ag');
+      r.appendChild(el('span', 'd', a.datum));
+      var m = el('div'); m.appendChild(el('div', 'ev', a.gebeurtenis)); m.appendChild(el('div', 'sub', (a.tijd ? a.tijd + ' · ' : '') + (a.toelichting || ''))); r.appendChild(m);
+      var lvl = (a.belang || 'laag').toLowerCase(); r.appendChild(el('span', 'impact ' + lvl, lvl));
+      host.appendChild(r);
     });
   }
-
-  function fmt(x) { return String(x).replace('.', ','); }
 
   function render() {
-    ['markten', 'portefeuille', 'agenda', 'kortetermijn', 'risicos'].forEach(function (id) { document.getElementById(id).textContent = ''; });
-    document.getElementById('titel').textContent = data.datum || '';
-    document.getElementById('bijgewerkt').textContent = data.tijd ? 'Bijgewerkt ' + data.tijd : 'Bijgewerkt';
-    document.getElementById('opmerking').textContent = data.opmerking || '';
-    document.getElementById('samenvatting').textContent = data.samenvatting || '';
+    var dp = (data.datum || '').split(' ');
+    $('st-tijd').textContent = data.tijd || '--:--';
+    $('st-dag').textContent = dp.length >= 3 ? dp[0].slice(0, 2) + ' ' + dp[1] + ' ' + dp[2].slice(0, 3) : '';
+    $('opmerking').textContent = data.opmerking || '';
 
-    var m = document.getElementById('markten');
-    (data.markten || []).forEach(function (r) {
-      var row = el('div', 'mrow');
-      var nm = el('span', 'name', r.naam); nm.appendChild(el('small', null, r.tijd || ''));
-      row.appendChild(nm);
-      row.appendChild(el('span', 'val num', r.stand));
-      var c = el('span', 'chg num', r.verandering);
-      c.style.background = chgColor(Number(r.pct) || 0);
-      row.appendChild(c);
-      m.appendChild(row);
-    });
-    document.getElementById('mtoel').textContent = data.marktenToelichting || '';
+    var markten = data.markten || [];
+    var top = $('chips-top'); top.textContent = '';
+    markten.slice(0, 6).forEach(function (m) { top.appendChild(chip(m.naam + ' ' + m.verandering, m.pct)); });
+    $('samenvatting').textContent = data.samenvatting || '';
 
-    renderNews();
-    renderItems(document.getElementById('economie'), data.economie || [], 'In deze editie geen apart economisch nieuws.');
-
-    var p = data.portefeuille || {}, ph = document.getElementById('portefeuille');
-    var tiles = el('div', 'tiles');
-    var t1 = el('div', 'tile card'); t1.appendChild(el('span', 'lab', 'Dagresultaat' + (p.schatting ? ' (schatting)' : ''))); t1.appendChild(el('span', 'big num ' + dirClass(p.totaalRichting), p.totaalEur));
-    var t2 = el('div', 'tile card'); t2.appendChild(el('span', 'lab', 'Procent')); t2.appendChild(el('span', 'big num ' + dirClass(p.totaalRichting), p.totaalPct));
-    tiles.appendChild(t1); tiles.appendChild(t2); ph.appendChild(tiles);
-    if ((p.posities || []).length) {
-      var pl = el('div', 'card plist');
-      p.posities.forEach(function (r) {
-        var row = el('div', 'prow');
-        row.appendChild(el('span', null, r.naam));
-        row.appendChild(el('span', 'num ' + dirClass(r.richting), r.pct));
-        row.appendChild(el('span', 'num ' + dirClass(r.richting), r.eur));
-        pl.appendChild(row);
-      });
-      ph.appendChild(pl);
+    var nieuws = (data.nieuws || []).slice(), eco = (data.economie || []).map(function (e) { var c = Object.assign({}, e); c._eco = true; return c; });
+    var alle = nieuws.concat(eco);
+    var lead = nieuws[0] || eco[0];
+    var op = $('opening'); op.textContent = '';
+    if (lead) {
+      var b = el('button', 'opening'); b.type = 'button';
+      b.appendChild(beeld(lead, null, lead.kop));
+      b.appendChild(el('span', 'rubriek', lead._eco ? 'Economie en beleid' : 'Beurs · ' + lead.categorie));
+      b.appendChild(el('h3', null, lead.kop));
+      b.appendChild(el('p', null, lead.kort));
+      b.addEventListener('click', function () { openArtikel(lead); });
+      op.appendChild(b);
     }
-    // Verdeling: kleur toont de afstand tot het doel; het onderdeel dat het verst onder doel zit krijgt het label "volgende inleg".
-    var verd = p.verdeling || [];
-    if (verd.length) {
-      var alloc = el('div', 'card alloc');
-      alloc.appendChild(el('div', 'atitle', 'Verdeling: nu tegenover doel'));
-      var lowest = null, gap = 0;
-      verd.forEach(function (a) { var g = (Number(a.doel) || 0) - (Number(a.nu) || 0); if (g > gap) { gap = g; lowest = a.naam; } });
-      verd.forEach(function (a) {
-        var nu = Number(a.nu) || 0, doel = Number(a.doel) || 0, diff = nu - doel;
-        var col = Math.abs(diff) <= 1 ? 'var(--up)' : (diff < 0 ? 'var(--agenda)' : 'var(--beurs)');
-        var row = el('div', 'arow');
-        var lbl = el('span', 'lbl', a.naam);
-        row.appendChild(lbl);
-        var bar = el('span', 'bar'); bar.setAttribute('role', 'img'); bar.setAttribute('aria-label', a.naam + ': nu ' + nu + '%, doel ' + doel + '%');
-        var f = el('span', 'fill'); f.style.width = Math.min(100, nu) + '%'; f.style.background = col;
-        var t = el('span', 'target'); t.style.left = Math.min(100, doel) + '%';
-        bar.appendChild(f); bar.appendChild(t); row.appendChild(bar);
-        var fig = el('span', 'fig num', fmt(nu) + ' / ' + fmt(doel));
-        row.appendChild(fig);
-        alloc.appendChild(row);
-        if (a.naam === lowest && gap > 0) { var tg = el('span', 'tag', 'VOLGENDE INLEG'); lbl.appendChild(document.createElement('br')); lbl.appendChild(tg); tg.style.marginLeft = '0'; }
-      });
-      ph.appendChild(alloc);
-    }
-    if (p.toelichting) ph.appendChild(el('p', 'note', p.toelichting));
-
-    var ag = document.getElementById('agenda');
-    (data.agenda || []).forEach(function (a) {
-      var row = el('div', 'arow2');
-      row.appendChild(el('span', 'date', a.datum));
-      var mid = el('span'); mid.appendChild(el('div', 'ev', a.gebeurtenis)); mid.appendChild(el('div', 'sub', (a.tijd ? a.tijd + ' · ' : '') + (a.toelichting || '')));
-      row.appendChild(mid);
-      var lvl = (a.belang || 'laag').toLowerCase();
-      row.appendChild(el('span', 'belang ' + lvl, lvl));
-      ag.appendChild(row);
+    var ras = $('raster'); ras.textContent = '';
+    alle.filter(function (n) { return n !== lead; }).slice(0, 4).forEach(function (n) {
+      var k = el('button', 'kaart'); k.type = 'button';
+      k.appendChild(beeld(n, 'klein', ''));
+      var tx = el('div', 'tx'); tx.appendChild(el('span', 'rubriek', n._eco ? 'Economie' : 'Beurs')); tx.appendChild(el('span', 'kop', n.kop)); k.appendChild(tx);
+      k.addEventListener('click', function () { openArtikel(n); });
+      ras.appendChild(k);
     });
-    if (!(data.agenda || []).length) ag.appendChild(el('p', 'empty', 'Geen agendapunten.'));
-    document.getElementById('inspelen').textContent = data.agendaInspelen || '';
-    document.getElementById('plana').textContent = data.planA || '';
+    agendaRows($('agenda-kort'), (data.agenda || []).slice(0, 3));
+    var rl = $('risicos'); rl.textContent = '';
+    (data.risicos || []).forEach(function (r) { rl.appendChild(el('div', 'risico', r)); });
 
-    var kt = data.kortetermijn || {}, kh = document.getElementById('kortetermijn');
-    var box = el('div', 'box card');
+    renderNieuws();
+    var eh = $('economie'); eh.textContent = '';
+    if (!eco.length) eh.appendChild(el('p', 'empty', 'In deze editie geen apart economisch nieuws.'));
+    eco.forEach(function (n) { var a = artikel(n); a._item = n; eh.appendChild(a); });
+
+    var mt = $('markten'); mt.textContent = '';
+    markten.forEach(function (m) {
+      var r = el('div', 'rij'); var nm = el('span', 'nm', m.naam); nm.appendChild(el('small', null, m.tijd || '')); r.appendChild(nm);
+      r.appendChild(el('span', 'v num', m.stand)); r.appendChild(chip(m.verandering, m.pct)); mt.appendChild(r);
+    });
+    $('mtoel').textContent = data.marktenToelichting || '';
+    agendaRows($('agenda'), data.agenda || []);
+    $('inspelen').textContent = data.agendaInspelen || '';
+
+    var p = data.portefeuille || {};
+    var res = $('result'); res.textContent = '';
+    var v1 = el('div', 'vak'); v1.appendChild(el('span', 'lab', 'Dagresultaat' + (p.schatting ? ' (schatting)' : ''))); v1.appendChild(el('span', 'groot num ' + dirClass(p.totaalRichting), p.totaalEur || '–')); res.appendChild(v1);
+    var v2 = el('div', 'vak'); v2.appendChild(el('span', 'lab', 'Procent')); v2.appendChild(el('span', 'groot num ' + dirClass(p.totaalRichting), p.totaalPct || '–')); res.appendChild(v2);
+    var pos = $('posities'); pos.textContent = ''; pos.hidden = !(p.posities || []).length;
+    (p.posities || []).forEach(function (r) { var row = el('div', 'prow'); row.appendChild(el('span', null, r.naam)); row.appendChild(el('span', 'num ' + dirClass(r.richting), r.pct)); row.appendChild(el('span', 'num ' + dirClass(r.richting), r.eur)); pos.appendChild(row); });
+    var vd = $('verdeling'); vd.textContent = '';
+    var verd = p.verdeling || []; vd.hidden = !verd.length;
+    vd.appendChild(el('span', 'rubriek', 'Verdeling Plan A: nu tegenover doel'));
+    var lowest = null, gap = 0;
+    verd.forEach(function (a) { var g = (Number(a.doel) || 0) - (Number(a.nu) || 0); if (g > gap) { gap = g; lowest = a.naam; } });
+    verd.forEach(function (a) {
+      var nu = Number(a.nu) || 0, doel = Number(a.doel) || 0, diff = nu - doel;
+      var r = el('div', 'vrij'); var lbl = el('span', 'lbl', a.naam);
+      if (a.naam === lowest && gap > 0) { lbl.appendChild(document.createElement('br')); lbl.appendChild(el('span', 'inleg', 'VOLGENDE INLEG')); }
+      r.appendChild(lbl);
+      var bar = el('span', 'bar'); bar.setAttribute('role', 'img'); bar.setAttribute('aria-label', a.naam + ': nu ' + fmt(nu) + '%, doel ' + fmt(doel) + '%');
+      var f = el('span', 'fill'); f.style.width = Math.min(100, nu) + '%'; f.style.background = Math.abs(diff) <= 1 ? '#8C9640' : (diff < 0 ? '#D9893A' : '#4F5932');
+      var t = el('span', 'doel'); t.style.left = 'calc(' + Math.min(100, doel) + '% - 1px)';
+      bar.appendChild(f); bar.appendChild(t); r.appendChild(bar);
+      r.appendChild(el('span', 'fig num', fmt(nu) + ' / ' + fmt(doel)));
+      vd.appendChild(r);
+    });
+    $('ptoel').textContent = p.toelichting || '';
+    $('plana').textContent = data.planA || '';
+    var kt = data.kortetermijn || {}, kh = $('kortetermijn'); kh.textContent = '';
     if (kt.idee) {
       var i = kt.idee, dl = document.createElement('dl');
-      [['Instrument', i.instrument], ['Richting', i.richting], ['Aanleiding', i.aanleiding], ['Instap', i.instap], ['Stop-loss', i.stopLoss], ['Koersdoel', i.koersdoel], ['Risico/rendement', i.risicoRendement], ['Horizon', i.horizon], ['Max. verlies op €500', i.maxVerlies], ['Risico\'s', i.risicos]].forEach(function (pair) {
-        if (!pair[1]) return; dl.appendChild(el('dt', null, pair[0])); dl.appendChild(el('dd', null, pair[1]));
-      });
-      box.appendChild(dl);
-      if (i.bronnen) box.appendChild(sourcesBlock(i.bronnen));
-    } else {
-      box.appendChild(el('p', null, kt.tekst || 'Geen idee met voldoende onderbouwing op dit moment.'));
-    }
-    box.appendChild(el('p', 'disclaimer', 'Hypothetisch idee, geen advies. De meeste kortetermijntransacties leiden tot verlies; gebruik alleen geld dat je kunt missen.'));
-    kh.appendChild(box);
-
-    var rl = document.getElementById('risicos');
-    (data.risicos || []).forEach(function (r) { rl.appendChild(el('li', 'card', r)); });
+      [['Instrument', i.instrument], ['Richting', i.richting], ['Aanleiding', i.aanleiding], ['Instap', i.instap], ['Stop-loss', i.stopLoss], ['Koersdoel', i.koersdoel], ['Risico/rendement', i.risicoRendement], ['Horizon', i.horizon], ['Max. verlies op €500', i.maxVerlies], ["Risico's", i.risicos]].forEach(function (x) { if (!x[1]) return; dl.appendChild(el('dt', null, x[0])); dl.appendChild(el('dd', null, x[1])); });
+      kh.appendChild(dl); if (i.bronnen) kh.appendChild(bronnen(i.bronnen));
+    } else kh.appendChild(el('p', null, kt.tekst || 'Geen idee met voldoende onderbouwing op dit moment.'));
+    kh.appendChild(el('p', 'note', 'Hypothetisch idee, geen advies. De meeste kortetermijntransacties leiden tot verlies.'));
   }
 
+  // Navigatie
+  var views = { vandaag: 'v-vandaag', nieuws: 'v-nieuws', markten: 'v-markten', port: 'v-port' };
+  function show(v) {
+    view = v;
+    Object.keys(views).forEach(function (k) { $(views[k]).hidden = k !== v; });
+    document.querySelectorAll('nav.tabs button').forEach(function (b) { if (b.getAttribute('data-v') === v) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
+    window.scrollTo(0, 0);
+    try { history.replaceState(null, '', '#' + v); } catch (e) {}
+  }
+  document.querySelectorAll('nav.tabs button').forEach(function (b) { b.addEventListener('click', function () { show(b.getAttribute('data-v')); }); });
   document.querySelectorAll('.filters button').forEach(function (b) {
     b.addEventListener('click', function () {
       filter = b.getAttribute('data-f');
       document.querySelectorAll('.filters button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
-      if (data) renderNews();
+      if (data) renderNieuws();
     });
   });
+  var start = (location.hash || '').slice(1); if (views[start]) show(start);
 
   // Versleutelde gegevens: AES-GCM met een sleutel afgeleid van de code (PBKDF2-SHA256).
-  var KEYNAME = 'bdb-code';
+  var KEYNAME = 'bdb-code', memCode = null;
   function getCode() { try { return localStorage.getItem(KEYNAME); } catch (e) { return null; } }
   function setCode(c) { try { localStorage.setItem(KEYNAME, c); } catch (e) {} }
   function clearCode() { try { localStorage.removeItem(KEYNAME); } catch (e) {} }
-  var memCode = null;
   function b64(s) { var b = atob(s), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
   function decrypt(env, code) {
     var enc = new TextEncoder();
@@ -469,16 +488,10 @@ nav.jump { top: env(safe-area-inset-top, 0px); }
       .then(function (key) { return crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64(env.iv) }, key, b64(env.ct)); })
       .then(function (buf) { return JSON.parse(new TextDecoder().decode(buf)); });
   }
-
-  var lastStamp = null, lastEnv = null;
-  var lock = document.getElementById('lock'), lockmsg = document.getElementById('lockmsg');
-  function showLock(msg) { lock.hidden = false; lockmsg.textContent = msg || ''; setTimeout(function () { document.getElementById('code').focus(); }, 50); }
+  var lastStamp = null, lastEnv = null, lock = $('lock'), lockmsg = $('lockmsg');
+  function showLock(msg) { lock.hidden = false; lockmsg.textContent = msg || ''; setTimeout(function () { $('code').focus(); }, 50); }
   function stampOf(j) { return (j && (j.datum || '') + '|' + (j.tijd || '')) || ''; }
-  function apply(j) {
-    var s = stampOf(j);
-    if (s !== lastStamp) { lastStamp = s; data = j; render(); return true; }
-    return false;
-  }
+  function apply(j) { var s = stampOf(j); if (s !== lastStamp) { lastStamp = s; data = j; render(); return true; } return false; }
   function load() {
     return fetch('data.enc.json?t=' + Date.now(), { cache: 'no-store' })
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
@@ -489,35 +502,26 @@ nav.jump { top: env(safe-area-inset-top, 0px); }
         return decrypt(env, code).then(function (j) { memCode = code; lock.hidden = true; return apply(j); },
           function () { clearCode(); memCode = null; showLock('Deze code klopt niet.'); return false; });
       })
-      .catch(function () {
-        if (!data) {
-          document.getElementById('titel').textContent = 'Het dagbericht kon niet worden geladen';
-          document.getElementById('opmerking').textContent = 'Controleer je internetverbinding en probeer het opnieuw.';
-        }
-        return false;
-      });
+      .catch(function () { if (!data) $('opmerking').textContent = 'Het dagbericht kon niet worden geladen. Controleer je internetverbinding.'; return false; });
   }
-  document.getElementById('lockform').addEventListener('submit', function (e) {
+  $('lockform').addEventListener('submit', function (e) {
     e.preventDefault();
-    var code = document.getElementById('code').value;
+    var code = $('code').value;
     if (!lastEnv) { memCode = code; setCode(code); load(); return; }
-    decrypt(lastEnv, code).then(function (j) { memCode = code; setCode(code); lock.hidden = true; document.getElementById('code').value = ''; apply(j); },
+    decrypt(lastEnv, code).then(function (j) { memCode = code; setCode(code); lock.hidden = true; $('code').value = ''; apply(j); },
       function () { lockmsg.textContent = 'Deze code klopt niet.'; });
   });
   load();
   setInterval(function () { if (!document.hidden) load(); }, 5 * 60 * 1000);
   document.addEventListener('visibilitychange', function () { if (!document.hidden) load(); });
 
-  var btn = document.getElementById('ververs'), status = document.getElementById('status');
+  var btn = $('ververs'), status = $('status');
   function hhmm() { var d = new Date(); return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2); }
   btn.addEventListener('click', function () {
     btn.disabled = true; status.textContent = 'Bezig met ophalen…';
-    load().then(function (changed) {
-      btn.disabled = false;
-      status.textContent = changed ? 'Nieuwe editie geladen om ' + hhmm() + '.' : 'Je hebt de nieuwste editie (gecontroleerd om ' + hhmm() + ').';
-    });
+    load().then(function (changed) { btn.disabled = false; status.textContent = changed ? 'Nieuwe editie geladen om ' + hhmm() + '.' : 'Je hebt de nieuwste editie (gecontroleerd om ' + hhmm() + ').'; });
   });
-  if ('serviceWorker' in navigator) { window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); }); }
+  if ('serviceWorker' in navigator) window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
 })();
 </script>
 </body>
